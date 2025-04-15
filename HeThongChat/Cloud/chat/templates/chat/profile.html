@@ -1,0 +1,16 @@
+<!-- chat/templates/chat/profile.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+    <h1>Profile của {{ user.username }}</h1>
+    <img src="{{ user.avatar.url }}" alt="Avatar" width="150">
+    <p><strong>Phone:</strong> {{ user.phone }}</p>
+
+    <a href="{% url 'edit_profile' %}">Chỉnh sửa Profile</a>
+</body>
+</html>
