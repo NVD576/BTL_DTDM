@@ -1,8 +1,90 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { useHistory } from "react-router-dom";
 import axios from "../../axios";
 import { AuthContext } from "../../Context/AuthProvider";
+import styled from "styled-components";
+
+// Styled-components
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background:rgb(255, 255, 255);
+  padding: 2rem;
+`;
+
+const FormWrapper = styled.div`
+  background: white;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 480px;
+  transition: all 0.3s ease;
+`;
+
+const Title = styled.h2`
+  font-size: 2rem;
+  font-weight: 800;
+  color: #7c3aed;
+  text-align: center;
+  margin-bottom: 1.5rem;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.3);
+  }
+`;
+
+const Button = styled.button`
+  width: 100%;
+  background: #7c3aed;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-top: 1rem;
+  transition: background 0.2s ease;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: #6d28d9;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+`;
+
+const ErrorMessage = styled.p`
+  color: #dc2626;
+  text-align: center;
+  margin-top: 0.5rem;
+  font-weight: 500;
+`;
+
+const AvatarPreview = styled.img`
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 2px solid #a78bfa;
+  margin-left: 1rem;
+`;
 
 const Register = () => {
   const formRef = useRef();
@@ -80,79 +162,45 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200">
-      <form
-        ref={formRef}
-        onSubmit={handleRegister}
-        className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md"
-      >
-        <h2 className="text-3xl font-bold mb-6 text-center text-purple-600">
-          Đăng ký tài khoản
-        </h2>
-
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full p-3 mb-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-          type="text"
-          placeholder="Tên đăng nhập"
-          className="w-full p-3 mb-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Mật khẩu"
-          className="w-full p-3 mb-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Nhập lại mật khẩu"
-          className="w-full p-3 mb-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-
-        <input
-          type="file"
-          accept="image/*"
-          className="w-full p-3 mb-4 border border-gray-300 rounded-xl"
-          onChange={handleAvatarChange}
-        />
-
-        {preview && (
-          <div className="mb-4 text-center">
-            <img
-              src={preview}
-              alt="avatar preview"
-              className="w-20 h-20 rounded-full mx-auto border-2 border-purple-400"
-            />
+    <Container>
+      <FormWrapper ref={formRef}>
+        <Title>Đăng ký tài khoản</Title>
+        <form onSubmit={handleRegister}>
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            type="text"
+            placeholder="Tên đăng nhập"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Input
+            type="password"
+            placeholder="Mật khẩu"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Input
+            type="password"
+            placeholder="Nhập lại mật khẩu"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Input type="file" accept="image/*" onChange={handleAvatarChange} />
+            {preview && <AvatarPreview src={preview} alt="avatar preview" />}
           </div>
-        )}
-
-        <button
-          type="submit"
-          className="w-full bg-purple-500 text-white py-3 rounded-xl hover:bg-purple-600 transition font-semibold text-lg"
-        >
-          {isLoading ? "Đang xử lý..." : "Đăng ký"}
-        </button>
-
-        {message && (
-          <p className="mt-4 text-sm text-center text-red-500 font-medium">
-            {message}
-          </p>
-        )}
-      </form>
-    </div>
+          <Button type="submit">
+            {isLoading ? "Đang xử lý..." : "Đăng ký"}
+          </Button>
+          {message && <ErrorMessage>{message}</ErrorMessage>}
+        </form>
+      </FormWrapper>
+    </Container>
   );
 };
 
