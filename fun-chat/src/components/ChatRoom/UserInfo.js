@@ -10,12 +10,30 @@ import { useHistory } from "react-router-dom";
 const WrapperStyled = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 12px 16px;
-  border-bottom: 1px solid rgba(82, 38, 83);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
 
   .username {
-    color: orange;
-    margin-left: 5px;
+    color: #ffcc00;
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: 16px;
+  }
+
+  .avatar {
+    border: 2px solid #fff;
+    transition: 0.3s;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
+    }
   }
 `;
 
@@ -55,7 +73,7 @@ export default function UserInfo() {
 
       console.log("Dữ liệu gửi đi:", {
         username: newUsername,
-        avatar: newAvatar ? newAvatar.name : "Không có ảnh mới"
+        avatar: newAvatar ? newAvatar.name : "Không có ảnh mới",
       });
 
       const response = await axios.patch(`users/${id}/`, formData, {
@@ -80,12 +98,15 @@ export default function UserInfo() {
 
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
-      setAvatarKey(prev => prev + 1);
+      setAvatarKey((prev) => prev + 1);
       message.success("Cập nhật thông tin thành công");
       setIsModalVisible(false);
     } catch (error) {
       console.error("Lỗi khi cập nhật thông tin:", error);
-      message.error("Cập nhật thông tin thất bại: " + (error.response?.data?.message || error.message));
+      message.error(
+        "Cập nhật thông tin thất bại: " +
+          (error.response?.data?.message || error.message)
+      );
     }
   };
 
@@ -97,17 +118,18 @@ export default function UserInfo() {
 
   return (
     <WrapperStyled>
-      <div>
-        <Avatar 
+      <div className="user-info">
+        <Avatar
           key={avatarKey}
-          src={avatar} 
+          src={avatar}
           onClick={handleAvatarClick}
-          style={{ cursor: 'pointer' }}
+          className="avatar"
         >
           {username?.charAt(0)?.toUpperCase()}
         </Avatar>
-        <Typography.Text className="username">{username} </Typography.Text>
+        <Typography.Text className="username">{username}</Typography.Text>
       </div>
+
       <Button
         ghost
         onClick={() => {
@@ -132,16 +154,15 @@ export default function UserInfo() {
             />
           </Form.Item>
           <Form.Item label="Ảnh đại diện">
-  <input
-    type="file"
-    accept="image/*"
-    onChange={(e) => {
-      console.log("File được chọn:", e.target.files[0]);
-      setNewAvatar(e.target.files[0]);
-    }}
-  />
-</Form.Item>
-
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                console.log("File được chọn:", e.target.files[0]);
+                setNewAvatar(e.target.files[0]);
+              }}
+            />
+          </Form.Item>
         </Form>
       </Modal>
     </WrapperStyled>

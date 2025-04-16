@@ -14,11 +14,14 @@ export default function AuthProvider({ children }) {
   const [isLogin, setIsLogin] = useState(() => {
     return localStorage.getItem("isLogin") === "true";
   });
-  const [re, setRe] = useState(false);
+  const [re, setRe] =useState(() => {
+    return localStorage.getItem("isLogin") === "true";
+  });
   const [isLoading, setIsLoading] = useState(true);
   const history = useHistory();
 
   useEffect(() => {
+    console.log("re", re);
     if (!re) {
       setIsLoading(false);
       history.push("/login");
