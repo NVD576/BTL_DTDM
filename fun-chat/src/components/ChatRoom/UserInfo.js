@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { Button, Avatar, Typography, Modal, Form, Input, message } from "antd";
+import { Button, Avatar, Typography } from "antd";
 import styled from "styled-components";
-import axios from "../../axios";
-
 import { AuthContext } from "../../Context/AuthProvider";
 import { AppContext } from "../../Context/AppProvider";
 import { useHistory } from "react-router-dom";
+import UpdateUserModal from "../Modals/UpdateUserModal";
 
 const WrapperStyled = styled.div`
   display: flex;
@@ -37,18 +36,37 @@ const WrapperStyled = styled.div`
   }
 `;
 
+const LogoutButton = styled(Button)`
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  color: white;
+  border: none;
+  font-weight: bold;
+  border-radius: 30px;
+  padding: 6px 18px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 75, 43, 0.3);
+
+  &:hover {
+    background: linear-gradient(135deg, #ff4b2b, #ff416c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 75, 43, 0.5);
+  }
+
+  &:focus {
+    outline: none;
+  }
+`;
+
 export default function UserInfo() {
   const history = useHistory();
   const {
-    user: { username, avatar, id },
+    user,
+    setUser,
+    setIsLogin,
+    setRe,
   } = React.useContext(AuthContext);
-  const { setUser, setIsLogin, setRe } = React.useContext(AuthContext);
   const { clearState } = React.useContext(AppContext);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [newUsername, setNewUsername] = useState(username);
-  const [newAvatar, setNewAvatar] = useState(null);
-  const [form] = Form.useForm();
-  const [avatarKey, setAvatarKey] = useState(0);
 
   const signOut = () => {
     setUser({});
@@ -59,112 +77,34 @@ export default function UserInfo() {
     history.push("/login");
   };
 
-  const handleAvatarClick = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("username", newUsername);
-      if (newAvatar) {
-        formData.append("avatar", newAvatar);
-      }
-
-      console.log("Dữ liệu gửi đi:", {
-        username: newUsername,
-        avatar: newAvatar ? newAvatar.name : "Không có ảnh mới",
-      });
-
-      const response = await axios.patch(`users/${id}/`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      console.log("Response từ server:", response.data);
-
-      // Lấy thông tin người dùng mới nhất từ server
-      const userResponse = await axios.get(`users/${id}/`);
-      console.log("Thông tin người dùng mới:", userResponse.data);
-
-      const updatedUser = {
-        ...userResponse.data,
-        id: id,
-        avatar: userResponse.data.avatar + `?t=${Date.now()}`,
-      };
-
-      console.log("Thông tin người dùng sẽ được cập nhật:", updatedUser);
-
-      setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setAvatarKey((prev) => prev + 1);
-      message.success("Cập nhật thông tin thành công");
-      setIsModalVisible(false);
-    } catch (error) {
-      console.error("Lỗi khi cập nhật thông tin:", error);
-      message.error(
-        "Cập nhật thông tin thất bại: " +
-          (error.response?.data?.message || error.message)
-      );
-    }
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setNewUsername(username);
-    setNewAvatar(null);
-  };
-
   return (
     <WrapperStyled>
       <div className="user-info">
         <Avatar
-          key={avatarKey}
-          src={avatar}
-          onClick={handleAvatarClick}
+          src={user.avatar}
+          onClick={() => setIsModalVisible(true)}
           className="avatar"
         >
-          {username?.charAt(0)?.toUpperCase()}
+          {user.username?.charAt(0)?.toUpperCase()}
         </Avatar>
-        <Typography.Text className="username">{username}</Typography.Text>
+        <Typography.Text className="username">{user.username}</Typography.Text>
       </div>
 
-      <Button
-        ghost
+      <LogoutButton
         onClick={() => {
           clearState();
           signOut();
         }}
       >
         Đăng xuất
-      </Button>
+      </LogoutButton>
 
-      <Modal
-        title="Cập nhật thông tin"
+      <UpdateUserModal
         visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item label="Tên người dùng">
-            <Input
-              value={newUsername}
-              onChange={(e) => setNewUsername(e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item label="Ảnh đại diện">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                console.log("File được chọn:", e.target.files[0]);
-                setNewAvatar(e.target.files[0]);
-              }}
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
+        onClose={() => setIsModalVisible(false)}
+        user={user}
+        setUser={setUser}
+      />
     </WrapperStyled>
   );
 }

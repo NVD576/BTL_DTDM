@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import { Spin } from "antd";
 import axios from "../axios";
 import { auth} from "../firebase/config";
-import { set } from "lodash";
 export const AuthContext = React.createContext();
 
 export default function AuthProvider({ children }) {
@@ -21,7 +20,6 @@ export default function AuthProvider({ children }) {
   const history = useHistory();
 
   useEffect(() => {
-    console.log("re", re);
     if (!re) {
       setIsLoading(false);
       history.push("/login");

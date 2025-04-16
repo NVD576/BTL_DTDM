@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
-import { Button } from "antd";
+import React, { useContext, useState } from "react";
+import { Button, Input, Tooltip } from "antd";
 import styled from "styled-components";
-import { PlusSquareOutlined } from "@ant-design/icons";
+import { PlusSquareOutlined, SearchOutlined } from "@ant-design/icons";
 import { AppContext } from "../../Context/AppProvider";
 
 const Container = styled.div`
@@ -11,24 +11,77 @@ const Container = styled.div`
   margin: 16px 8px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(6px);
+
+  align-items: center;
+  justify-content: space-between;
 `;
 
-const Header = styled.h3`
-  color: #ffc0cb;
-  font-size: 18px;
-  margin-bottom: 12px;
-  text-align: center;
-  letter-spacing: 1px;
+const InputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+`;
+
+const StyledInput = styled(Input)`
+  flex-grow: 1;
+  margin-right: 12px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fff;
+  border: none;
+  transition: background-color 0.3s;
+
+  &:hover,
+  &:focus {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    outline: none;
+  }
+
+  &::placeholder {
+    color: #ccc;
+  }
+
+  input {
+    color: #fff;
+    background-color: transparent;
+  }
+
+  .anticon {
+    color: #fff;
+  }
+`;
+
+const AddRoomButton = styled(Button)`
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background-color: #ffcc00;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #ffdb4d;
+    transform: scale(1.1);
+  }
+
+  .anticon {
+    font-size: 18px;
+    color: #000;
+  }
 `;
 
 const RoomLink = styled.div`
   background-color: rgba(255, 255, 255, 0.08);
-  padding: 10px 16px; /* Tăng padding cho dễ nhìn */
+  padding: 10px 16px;
   margin-bottom: 8px;
-  border-radius: 8px;
+  border-radius: 50px;
+  width: 85%;
   color: #fff;
   cursor: pointer;
-  transition: all 0.3s ease-in-out; /* Thêm transition cho mượt mà */
+  transition: all 0.3s ease-in-out;
   font-weight: 500;
 
   &:hover {
@@ -37,79 +90,61 @@ const RoomLink = styled.div`
     transform: translateX(4px);
   }
 
-  /* Style cho phòng được chọn (nổi bật hơn) */
   &.selected {
-    background-color: #64b5f6; /* Màu xanh dương tươi */
+    background-color: #64b5f6;
     color: #fff;
     font-weight: bold;
-    transform: scale(1.02); /* Phóng to nhẹ */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Đổ bóng rõ hơn */
-    border: 1px solid #42a5f5; /* Thêm border */
-  }
-`;
-
-const AddRoomButton = styled(Button)`
-  width: 100%;
-  margin-top: 12px;
-  color: black;
-  border: 1px dashed #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.3s;
-
-  span {
-    margin-left: 8px;
-    opacity: 1;
-    transition: opacity 0.3s, color 0.3s;
-  }
-
-  &:hover {
-    background-color: #ffcc00;
-    color: #000;
-    border-color: #ffcc00;
-
-    span {
-      color: #000;
-    }
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid #42a5f5;
   }
 `;
 
 export default function RoomList() {
-  const { rooms, setIsAddRoomVisible, selectedRoomId: globalSelectedRoomId, setSelectedRoomId: setGlobalSelectedRoomId } =
-    useContext(AppContext);
-  const [localSelectedRoomId, setLocalSelectedRoomId] = useState(null);
+  const {
+    rooms,
+    selectedRoomId,
+    setSelectedRoomId,
+    setIsAddRoomVisible,
+  } = useContext(AppContext);
 
-  const handleAddRoom = () => {
-    setIsAddRoomVisible(true);
-  };
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const handleRoomClick = (roomId) => {
-    setLocalSelectedRoomId(roomId);
-    setGlobalSelectedRoomId(roomId);
-  };
+  const handleAddRoom = () => setIsAddRoomVisible(true);
+  const handleRoomClick = (roomId) => setSelectedRoomId(roomId);
+
+  const filteredRooms = rooms.filter((room) =>
+    room.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Container>
-      <Header>Danh sách các phòng</Header>
-      {rooms.map((room) => (
+      <InputContainer>
+        <StyledInput
+          placeholder="Tìm kiếm phòng..."
+          prefix={<SearchOutlined />}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          allowClear
+        />
+        <Tooltip title="Thêm phòng">
+          <AddRoomButton
+            type="primary"
+            icon={<PlusSquareOutlined />}
+            onClick={handleAddRoom}
+          />
+        </Tooltip>
+      </InputContainer>
+
+      {filteredRooms.map((room) => (
         <RoomLink
           key={room.id}
           onClick={() => handleRoomClick(room.id)}
-          className={localSelectedRoomId === room.id || globalSelectedRoomId === room.id ? 'selected' : ''}
+          className={selectedRoomId === room.id ? "selected" : ""}
         >
           {room.name}
         </RoomLink>
       ))}
-      <AddRoomButton
-        type="dashed"
-        icon={<PlusSquareOutlined />}
-        onClick={handleAddRoom}
-      >
-        <span>Thêm phòng</span>
-      </AddRoomButton>
     </Container>
   );
 }
