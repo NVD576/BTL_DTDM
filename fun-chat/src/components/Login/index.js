@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { gsap } from "gsap";
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../../Context/AuthProvider';
+import { set } from "lodash";
 
 
 const Container = styled.div`
@@ -248,7 +249,7 @@ export default function Login() {
 
 
 
-  const { setUser, setRe } = React.useContext(AuthContext);
+  const { setUser, setRe , setIsLoginGoogle} = React.useContext(AuthContext);
 
   let eyeScale = 1;
   let eyesCovered = false;
@@ -261,7 +262,9 @@ export default function Login() {
       await auth.signInWithPopup(provider);
 
       setRe(true);
+      setIsLoginGoogle(true);
     } catch (error) {
+      setRe(false);
       console.error('Lỗi đăng nhập:', error);
       alert('Đăng nhập thất bại: ' + error.message);
     }
@@ -287,8 +290,8 @@ export default function Login() {
         console.log("Logging in with:", userInfo);
         setUser(userInfo);
         setRe(true);
-        // history.push("/login");
       } catch (error) {
+          setRe(false);
           console.error("Login error:", error.code, error.message);
           alert(error.message);
       }

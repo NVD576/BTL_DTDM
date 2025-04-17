@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Spin } from "antd";
 import axios from "../axios";
 import { auth} from "../firebase/config";
+import { hi } from "date-fns/locale";
 export const AuthContext = React.createContext();
 
 export default function AuthProvider({ children }) {
@@ -12,6 +13,9 @@ export default function AuthProvider({ children }) {
   });
   const [isLogin, setIsLogin] = useState(() => {
     return localStorage.getItem("isLogin") === "true";
+  });
+  const [isLoginGoogle, setIsLoginGoogle] = useState(() => {
+    return localStorage.getItem("isLoginGoogle") === "true";
   });
   const [re, setRe] =useState(() => {
     return localStorage.getItem("isLogin") === "true";
@@ -25,7 +29,11 @@ export default function AuthProvider({ children }) {
       history.push("/login");
       return;
     }
-    console.log("re", re);
+    if (isLogin){
+      setIsLoading(false);
+      history.push("/");
+      return;
+    }
     const handleLogin = async (userInfo) => {
       try {
         const res = await axios.post("login/", userInfo);
@@ -47,6 +55,7 @@ export default function AuthProvider({ children }) {
         console.error("Lỗi login backend:", err);
         setIsLoading(false);
         setUser({});
+        setIsLoginGoogle(false);
         setIsLogin(false);
         setRe(false);
         history.push("/login");
@@ -61,29 +70,34 @@ export default function AuthProvider({ children }) {
         password: user.password,
       };
       console.log("🧑‍💻 userInfo từ đăng nhập thủ công:", userInfo);
+
       handleLogin(userInfo);
       return;
     }
   
     // 2. Nếu đăng nhập bằng Google qua Firebase
-    const unsubscribe = auth.onAuthStateChanged((userK) => {
-      if (userK) {
-        const userInfo = {
-          email: userK.email,
-          username: userK.displayName || "",
-          password: "", // Google không có password
-        };
-        console.log("🌐 userInfo từ Google:", userInfo);
-        handleLogin(userInfo);
-      }
-    });
+    if(isLoginGoogle){
+      const unsubscribe = auth.onAuthStateChanged((userK) => {
+        if (userK) {
+          const userInfo = {
+            email: userK.email,
+            username: userK.displayName || "",
+            password: "", 
+          };
+          localStorage.setItem("isLoginGoogle", "true");
+          console.log("🌐 userInfo từ Google:", userInfo);
+          handleLogin(userInfo);
+        }
+      });
+      return () => unsubscribe();
+    }
   
-    return () => unsubscribe();
+    
   }, [re]);
   
 
   return (
-    <AuthContext.Provider value={{ user, setUser, setIsLogin,  setRe }}>
+    <AuthContext.Provider value={{ user, setUser, setIsLogin,  setRe ,setIsLoginGoogle}}>
       {isLoading ? <Spin style={{ position: "fixed", inset: 0 }} /> : children}
     </AuthContext.Provider>
   );

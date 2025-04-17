@@ -64,6 +64,7 @@ export default function UserInfo() {
     setUser,
     setIsLogin,
     setRe,
+    setIsLoginGoogle
   } = React.useContext(AuthContext);
   const { clearState } = React.useContext(AppContext);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -72,8 +73,10 @@ export default function UserInfo() {
     setUser({});
     setIsLogin(false);
     setRe(false);
+    setIsLoginGoogle(false);
     localStorage.removeItem("user");
     localStorage.removeItem("isLogin");
+    localStorage.removeItem("isLoginGoogle");
     history.push("/login");
   };
 
