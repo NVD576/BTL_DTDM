@@ -29,6 +29,7 @@ export default function AuthProvider({ children }) {
       history.push("/login");
       return;
     }
+    
     if (isLogin){
       setIsLoading(false);
       history.push("/");
