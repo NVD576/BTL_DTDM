@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     # avatar = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['id','username', 'avatar', 'email']
+        fields = ['id','username', 'avatar', 'email', 'password']
 
     def get_avatar(self, obj):
         request = self.context.get('request')
