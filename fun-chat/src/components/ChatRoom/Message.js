@@ -52,7 +52,7 @@ export default function Message({
         <Avatar size="small" src={photoURL}>
           {photoURL ? "" : displayName?.charAt(0)?.toUpperCase()}
         </Avatar>
-        <Typography.Text className="author">{displayName}</Typography.Text>
+        <Typography.Text className="author">{displayName} </Typography.Text>
         <Typography.Text className="date">
           {formatDate(createdAt?.seconds)}
         </Typography.Text>

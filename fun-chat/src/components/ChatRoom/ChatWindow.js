@@ -173,7 +173,8 @@ export default function ChatWindow() {
 
       if (response.status === 201) {
         message.success("Tin nhắn đã được gửi thành công");
-        setMessages((prev) => [...prev, response.data]);
+        await fetchMessages();
+
       }
 
       form.resetFields();
