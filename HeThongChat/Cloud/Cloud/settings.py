@@ -31,7 +31,10 @@ ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # URL của ứng dụng React
+'http://bucket-ou-chat.s3-website-us-east-1.amazonaws.com',
 ]
+
+
 import os
 from pathlib import Path
 
@@ -94,9 +97,18 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'chatdb',
-        'USER': 'root',
-        'PASSWORD': 'Admin@123',
-        'HOST': '' # mặc định localhost
+        'USER': 'admin',
+        'PASSWORD': 'Admin123',
+        'HOST': 'chatdb.ccpv5gqw4b6p.us-east-1.rds.amazonaws.com', # endpoint
+        'PORT': '3306'
+    },
+   'ec2': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'chatdb',
+        'USER': 'admin',
+        'PASSWORD': 'Admin123',
+        'HOST': '172.16.1.69', # IP private EC2 Data
+        'PORT': '3306'
     }
 }
 
