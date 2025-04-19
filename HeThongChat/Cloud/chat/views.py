@@ -68,8 +68,7 @@ def login_view(request):
     password = request.data.get('password')  # Có thể là None nếu login bằng Google
     username = request.data.get('username')
 
-    if not email:
-        return Response({'error': 'Thiếu email'}, status=400)
+
 
     try:
         user = User.objects.get(email=email)
@@ -100,6 +99,8 @@ def login_view(request):
             })
     else:
         # Tạo user mới
+        if not username:
+            return Response({'Tài khoản không tồn tại'}, status=400)
         try:
             user = User.objects.create(username=username, email=email)
             if password:

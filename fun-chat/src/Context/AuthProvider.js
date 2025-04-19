@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Spin } from "antd";
+import { message, Spin } from "antd";
 import axios from "../axios";
 import { auth} from "../firebase/config";
-import { hi } from "date-fns/locale";
 export const AuthContext = React.createContext();
 
 export default function AuthProvider({ children }) {
@@ -53,6 +52,7 @@ export default function AuthProvider({ children }) {
         history.push("/");
       } catch (err) {
         console.error("Lỗi login backend:", err);
+        message.error("Đăng nhập thất bại, vui lòng thử lại!");
         setIsLoading(false);
         setUser({});
         setIsLoginGoogle(false);

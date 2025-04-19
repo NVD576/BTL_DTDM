@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { gsap } from "gsap";
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../../Context/AuthProvider';
-import { set } from "lodash";
 
 
 const Container = styled.div`

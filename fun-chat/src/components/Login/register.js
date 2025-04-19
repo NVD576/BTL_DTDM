@@ -147,12 +147,15 @@ const Register = () => {
       });
 
       const data = response.data;
+      message.success("Đăng ký thành công!");
+
       if (isMounted.current) {
         setUser(data);
         setRe(true);
       }
     } catch (error) {
-      console.error("Lỗi khi đăng ký:", error);
+      console.error("Lỗi khi đăng ký:", error.response || error.message);
+      setRe(false);
       if (isMounted.current) {
         setMessage("Đăng ký không thành công. Vui lòng thử lại.");
       }
@@ -191,7 +194,7 @@ const Register = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <div style={{ display: "flex", alignItems: "center" }}>
-            <Input type="file" accept="image/*" onChange={handleAvatarChange} />
+            <Input required type="file" accept="image/*" onChange={handleAvatarChange} />
             {preview && <AvatarPreview src={preview} alt="avatar preview" />}
           </div>
           <Button type="submit">
