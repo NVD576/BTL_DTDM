@@ -352,11 +352,6 @@ aws s3 cp build/ s3://chat-frontend-build/ --recursive
 6. Build React, upload `build/` lên S3, cấu hình frontend hosting hoặc CloudFront.
 7. Test ứng dụng qua DNS của ALB (hoặc domain trỏ tới CloudFront/S3).
 
----
-
-## Kết thúc và dọn dẹp (cleanup)
-
-Nếu bạn chỉ thử nghiệm, xóa các tài nguyên (EC2, RDS, S3, ALB, VPC) để tránh phí phát sinh.
 
 ---
 
@@ -369,9 +364,5 @@ Nếu bạn chỉ thử nghiệm, xóa các tài nguyên (EC2, RDS, S3, ALB, VPC
 
 ---
 
-### Muốn mình làm tiếp?
 
-* Mình có thể: chuẩn hoá file `.env.example`, viết systemd + nginx config mẫu, hoặc tạo script deployment (Ansible / Terraform). Nói mình biết bạn muốn phần nào mình viết luôn.
-
-*Hết.*
 
