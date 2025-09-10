@@ -1,7 +1,7 @@
 ## BTL_DTDM – Hệ thống Chat (Django + React)
 
 Dự án gồm 2 phần:
-- **HeThongChat**: Backend viết bằng Django (REST + template) lưu dữ liệu SQLite, quản lý người dùng, phòng chat, media.
+- **HeThongChat**: Backend viết bằng Django (REST + template) lưu dữ liệu MySQL, quản lý người dùng, phòng chat, media.
 - **fun-chat**: Frontend viết bằng React, tích hợp Firebase (Auth/Firestore/Storage) để realtime/chat UI.
 
 ### Cấu trúc thư mục
